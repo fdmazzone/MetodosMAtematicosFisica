@@ -1,0 +1,1652 @@
+
+
+
+
+\section{Solución de EDO mediante series de potencias}
+
+
+
+\subsection{Método coeficientes indeterminados}
+
+ \begin{frame}{\textbf{Método coeficientes indeterminados}}
+
+
+Consiste en proponer el desarrollo en serie de la solución
+
+\[y(x)=a_0+a_1(x-x_0)+a_2(x-x_0)^2+\cdots  \]
+remplazar $y(x)$ por este desarrollo en  en la ecuación 
+
+
+
+\begin{equation}  F(x,y,y',\ldots,y^{(n)})=0\end{equation}
+
+
+ y tratar de resolver la ecuación resultante para los coeficientes (indeterminados) $a_n$.
+\end{frame}
+
+ \begin{frame}{\textbf{Método coeficientes indeterminados}}
+\textbf{Ejemplo } Hallar el desarrollo en serie de la solución del  pvi
+\[\left\{\begin{array}{l l} y'&=y\\ y(0)&=1\end{array}\right.\]
+ Escribimos
+\[\begin{split}
+   y&=a_0+a_1x+a_2x^2+\cdots+a_nx^n+\cdots\\
+   y'&=a_1+2a_2x+3a_3x^2+\cdots+(n+1)a_{n+1}x^n+\cdots
+  \end{split}
+\]
+\end{frame}
+
+ \begin{frame}{\textbf{Método coeficientes indeterminados}}
+
+La igualdad $y'=y$ implica que
+\[\begin{split}
+   a_1&=a_0\\
+   a_2&=\frac{a_1}{2}\\
+      &\,\,\,\,\vdots \\
+   a_{n+1}&=\frac{a_{n}}{n+1}
+ \end{split}
+\]
+
+
+\end{frame}
+
+ \begin{frame}{\textbf{Método coeficientes indeterminados}}
+Si iteramos la fórmula $a_{n+1}=a_{n}/(n+1)$, obtenemos
+\[a_n=\frac{1}{n}a_{n-1}=\frac{1}{n(n-1)}a_{n-2}=\cdots=\frac{1}{n(n-1)\cdots 1}a_{0}=\frac{a_0}{n!}.\]
+Pero $a_0=y(0)=1$. Luego
+\boxedeq{a_n=\frac{1}{n!}}{eq:exp}
+
+\end{frame}
+
+
+
+ \begin{frame}[fragile]{\textbf{Método coeficientes indeterminados}}
+\begin{sympyblock}[][numbers=left,frame=single,framesep=5mm]
+from sympy import *
+a=symbols('a0:6')
+x=symbols('x')
+y=sum([a[i]*x**i for i in range(6)])
+Ecua=y.diff(x)-y
+Ecuaciones=[Ecua.diff(x,i).subs(x,0)/factorial(i)\
+    for i in range(6)]
+a_sol=solve(Ecuaciones[:-1],a[1:])
+y.subs(a_sol)
+\end{sympyblock}
+\boxedeq{y(x)=\sympy{y.subs(a_sol)}      }{eq:sol_sage}
+
+
+
+
+
+
+\end{frame}
+
+
+
+\subsection{Relaciones de recurrencia}
+
+ \begin{frame}[fragile]{\textbf{Relaciones de recurrencia}}
+La expresión $a_{n+1}=\frac{a_{n}}{n+1}$ es un ejemplo de \href{http://es.wikipedia.org/wiki/Relación_de_recurrencia}{relación de recurrencia}.
+\begin{block}{Definición} Una  \emph{relación de recurrencia} para una sucesión $b_n$ de números reales es una sucesión de
+funciones $f_n:\rr^n\to\rr$ que relaciona $b_{n+1}$ con los términos anteriores de la sucesión por medio de
+la expresión
+\begin{equation}\label{eq:recu} b_{n+1}=f_n(b_1,\ldots,b_n).
+\end{equation}
+Resolver una relación de recurrencia es encontrar una fórmula explícita de $b_n$ como función de $n$.
+ \end{block}
+\end{frame}
+
+
+ \begin{frame}[fragile]{\textbf{Relaciones de recurrencia}}
+
+\textbf{Ejemplo } Resolvamos con SymPy la sucesión de Fibonacci $a_{n+2}=a_{n+1}+a_n$.
+\begin{sympyblock}[][numbers=left,frame=single,framesep=5mm]
+n=symbols('n',integer=True)
+y = Function('y')
+f=Equality(y(n),y(n-1)+y(n-2))
+sol=rsolve(f,y(n))
+\end{sympyblock}
+ \boxedeq{a_n=\sympy{sol}  }{}
+ 
+ 
+ 
+ 
+Las constantes arbitrarias $C_0$ y $C_1$ aparecen porque una relación de recurrencia no tiene una única solución. 
+\end{frame}
+
+
+ \begin{frame}[fragile]{\textbf{Relaciones de recurrencia}}
+
+\begin{block}{Definición}
+ Se dice que una relación de recurrencia tiene \emph{orden $k$} o es de $k$-términos si el coeficiente $a_n$ se expresa en función de los $k$  anteriores. 
+\end{block}
+
+\textbf{Observación }  En general la solución general de una relación de recurrencia de $k$-términos tiene $k$ constantes arbitrarias. Por consiguiente, si queremos una única solución debemos tener $k$ relaciones extras. Usualmente esto se consigue dando los valores de los $k$-primeros términos $a_0,\ldots,a_k$. Por ejemplo, en  la sucesión de Fibonacci si pedimos $a_0=a_1=1$.
+
+
+\end{frame}
+
+
+
+ \begin{frame}[fragile]{\textbf{Relaciones de recurrencia}}
+\begin{sympyblock}[][numbers=left,frame=single,framesep=5mm]
+C0,C1=symbols('C0,C1')
+A=C0*((1+sqrt(5))/2)**n+C1*((1-sqrt(5))/2)**n
+Cval=solve([A.subs(n,0)-1,A.subs(n,1)-1],[C0,C1])
+Fib=A.subs(Cval)
+Fibonacci10=[Fib.subs(n,i).expand()\
+    for i in range(10)]
+\end{sympyblock}
+
+
+Los primeros \emph{números de Fibonacci} que
+
+\[ \sympy{Fibonacci10}\]
+
+\end{frame}
+
+
+
+
+\subsection{Serie binomial}
+ \begin{frame}[fragile]{\textbf{Serie binomial}}
+ 
+ 
+Usamos  el método de coeficientes indeterminados para encontrar desarrollos en serie de una función  $f$.
+
+\textbf{Ejemplo }  Encontrar el desarrollo en serie de la función
+\[y(x)=(1+x)^p\quad p\in\rr\]
+La función $y(x)$ resuelve el pvi  $(1+x)y'(x)=py$, $y(0)=1$. 
+
+
+
+\end{frame}
+
+
+
+
+ \begin{frame}[fragile]{\textbf{Serie binomial}}
+
+
+
+
+
+
+Apliquemos el método de coeficientes indeterminados a este pvi.
+Como
+\[\begin{split}
+   y&=a_0+a_1x+a_2x^2+\cdots+a_nx^n+\cdots\\
+   y'&=a_1+2a_2x+3a_3x^2+\cdots+(n+1)a_{n+1}x^n+\cdots
+  \end{split}
+\]
+Tenemos
+\[\begin{split}
+   py=&pa_0+pa_1x+pa_2x^2+\cdots+pa_nx^n+\cdots\\
+  (1+x)y'=&a_1+2a_2x+3a_3x^2+\cdots+(n+1)a_{n+1}x^n+\cdots\\
+          &+a_1x+2a_2x^2+3a_3x^3+\cdots+na_{n}x^n+\cdots\\
+-------&----------------------\\
+0=(1+x)y'-py =& (a_1-pa_0)+(a_1+2a_2-pa_1)x+\cdots \\
+&+((n+1)a_{n+1}+na_n-pa_n)x^n+\cdots
+  \end{split}
+\]
+
+
+\end{frame}
+
+
+
+ \begin{frame}[fragile]{\textbf{Serie binomial}}
+
+Tenemos la relación
+\[ a_{n+1}=\frac{(p-n)}{n+1}a_n.
+\]
+
+\begin{multline*}a_n=\frac{(p-n+1)}{n}a_{n-1}=\frac{(p-n+1)(p-n+2)}{n(n-1)}a_{n-2}=\cdots\\=\frac{(p-n+1)(p-n+2)\cdots p}{n!}a_0.
+ \end{multline*}
+
+Como $a_0=y(0)=1$ vemos que
+\boxedeq{a_n=\frac{(p-n+1)(p-n+2)\cdots p}{n!}.}{eq:coef_bin}
+
+\end{frame}
+
+
+
+ \begin{frame}[fragile]{\textbf{Serie binomial}}
+
+Si $p\in\mathbb{N}$ entonces $a_n=0$ para $n>p$. Esto es claro, por otro lado, ya que en este caso $(1+x)^p$ es un polinomio. Por la fórmula del binomio de Newton los coeficientes para $p\in \mathbb{N}$  no son más que los coeficientes binomiales
+\[a_n=\binom{p}{n}\]
+ Cuando $p\in\mathbb{R}$ aún vamos a seguir denominado a $a_n$, dado por la fórmula \eqref{eq:coef_bin},  \emph{ coeficiente binomial}. La serie resultante se llama la serie binomial. Cuando $p\in\mathbb{R}-\mathbb{N}$ es una serie infinita y no  un polinomio. Notar que para $p$ no entero positivo
+\[\lim\limits_{n\to\infty}\frac{|a_{n+1}|}{|a_n|}=\lim\limits_{n\to\infty}\frac{|p-n|}{|n+1|}=1\]
+
+\end{frame}
+
+
+
+ \begin{frame}[fragile]{\textbf{Serie binomial}}
+
+Luego la serie tiene radio de convergencia 1.  Hemos demostrado asi que vale la siguiente fórmula, que es una generalización de la fórmula binomial de Newton
+\boxedeq{(1+x)^p=1+px+\frac{p(p-1)}{2!}x^2  +\cdots=1+\binom{p}{1}x+\binom{p}{2}x^2+\cdots}{}
+Esta importante serie se denomina \emph{serie binomial}.
+\end{frame}
+
+
+
+ \begin{frame}[fragile]{\textbf{Serie binomial}}
+
+\begin{sympyblock}[][numbers=left,frame=single,framesep=5mm]
+a=symbols('a0:6')
+x,p=symbols('x,p')
+y=sum([a[i]*x**i for i in range(6)])
+Ecua=(1+x)*y.diff(x)-p*y
+Ecuaciones=[Ecua.diff(x,i).subs(x,0)/factorial(i)\
+    for i in range(6)]
+Ecuaciones=Ecuaciones[:-1]+[a[0]-1]
+a_sol=solve(Ecuaciones,a)
+y.subs(a_sol)
+\end{sympyblock}
+{\small
+\(y(x)=\sympy{y.subs(a_sol)}\)
+}
+%\boxedeq{y(x)=\py{latex(y.subs(a_sol))}  }{}
+\end{frame}
+
+
+
+ \begin{frame}[fragile]{\textbf{Serie binomial}}
+\begin{sympyblock}[][numbers=left,frame=single,framesep=5mm]
+y.subs(a_sol).coeff(x**4).factor()
+\end{sympyblock}
+
+\(\sympy{y.subs(a_sol).coeff(x**4).factor()}\)
+\end{frame}
+
+
+
+
+\subsection{Oscilador armónico}
+
+ \begin{frame}[fragile]{\textbf{Oscilador armónico}}
+ 
+\textbf{Ejemplo } Consideremos la ecuación
+\[y''+\omega^2y=0.\]
+Esta es una ecuación de segundo orden. Veamos si el método de coeficientes indeterminados nos lleva a la solución. Se tiene
+\[\begin{split}
+    \omega^2y&=\omega^2a_0+\omega^2a_1x+\omega^2a_2x^2+\cdots+\omega^2a_nx^n+\cdots\\
+  y''&=2a_2+2\cdot 3a_3x+\cdots+(n+1)(n+2)a_{n+2}x^n+\cdots\\
+--&---------------------------\\
+0=y''+\omega^2y =& (\omega^2a_0+2a_2)+(\omega^2a_1+2\cdot 3a_3)x+\cdots +(\omega^2a_n+(n+1)(n+2)a_{n+2})x^n+\cdots
+  \end{split}
+\]
+Encontramos la relación de recurrencia de dos términos
+\boxedeq{a_{n+2}=-\frac{\omega^2a_n}{(n+1)(n+2)}.}{}
+
+\end{frame}
+
+
+
+
+ \begin{frame}[fragile]{\textbf{Oscilador armónico}}
+ 
+ Si $n=2k$, $k\in\mathbb{N}$,
+\[a_{2k}=-\frac{\omega^2}{2k(2k-1)}a_{2k-2}=\cdots=(-1)^k\frac{\omega^{2k}}{(2k)!}a_0.\]
+En cambio si $n=2k+1$ es impar
+\[a_{2k+1}=-\frac{\omega^2}{(2k+1)2k}a_{2k-1}=\cdots=(-1)^k\frac{\omega^{2k}}{(2k+1)!}a_1.\]
+Entonces
+\boxedeq{
+   \begin{split}
+     y(x) &=a_0\sum_{k=0}^{\infty}(-1)^k\frac{1}{(2k)!}\left(\omega x\right)^{2k}+\frac{a_1}{\omega}\sum_{k=0}^{\infty}(-1)^k\frac{1}{(2k+1)!}\left(\omega x\right)^{2k+1}\\
+&=a_0\cos\omega x+\frac{a_1}{\omega}\sen\omega x
+   \end{split}
+ }{}
+ \end{frame}
+
+
+
+
+ \begin{frame}[fragile]{\textbf{Oscilador armónico}}
+
+\begin{sympyblock}[][numbers=left,frame=single,framesep=5mm]
+a=symbols('a0:6')
+orden=6
+x,omega=symbols('x,omega')
+y=sum([a[i]*x**i for i in range(orden)])
+Ecua=y.diff(x,2)+omega**2*y
+Ecuaciones=[Ecua.diff(x,i).subs(x,0)/factorial(i)\
+    for i in range(orden)]
+Ecuaciones=Ecuaciones[:-2]
+a_sol=solve(Ecuaciones,a[2:])
+y.subs(a_sol)
+\end{sympyblock}
+
+\(y(x)=\sympy{y.subs(a_sol)  } \)
+
+\end{frame}
+
+
+
+
+
+\subsection{Ecuación de Legendre}
+\begin{frame}[fragile]{\textbf{Ecuación de Legendre}}
+
+
+\boxedeq{(1-x^2)y''-2xy'+p(p+1)y=0,}{eq:ecua_lege}
+donde $p>0$. 
+{\small
+\[\begin{split}
+   p(p+1)y&= p(p+1)a_0+ p(p+1)a_1x+ p(p+1)a_2x^2+\cdots+ p(p+1)a_nx^n+\cdots\\
+  -2xy'&=-2a_1x-4a_2x^2-6a_3x^3+\cdots-2na_{n}x^n+\cdots\\
+(1-x^2)y''&= 2a_2+2\cdot 3a_3x+\cdots +(n+1)(n+2)a_{n+2}x^n+\cdots\\
+          &-2a_2x^2-2\cdot 3a_3x^3-\cdots -(n-1)na_{n}x^n-\cdots\\
+     -------&----------------------\\
+0=&(1-x^2)y''-2xy+p(p+1)y\\
+=& (p(p+1)a_0+2a_2)+(p(p+1)a_1-2a_12\cdot 3a_3)x+\cdots\\
+     &+ \left( (p(p+1)-n(n+1)\right)a_n+n(n+1)a_{n+2})x^n+\cdots
+  \end{split}
+\]
+}
+\end{frame}
+
+
+
+\begin{frame}[fragile]{\textbf{Ecuación de Legendre}}
+
+\boxedeq{a_{n+2}=-\frac{(p-n)(p+n+1)}{(n+1)(n+2)} a_n}{eq:leg_rel_recu}
+ Dividimos la serie en los términos pares e impares
+\[\sum\limits_{n=0}^{\infty}a_nx^n= \sum\limits_{k=0}^{\infty}a_{2k}x^{2k}+\sum\limits_{k=0}^{\infty}a_{2k+1}x^{2k+1}\]
+A cada una de estas series le podemos aplicar el criterio de la razón usando la fórmula de recuerrencia de arriba. Por ejemplo para los términos pares
+\[\lim\limits_{k\to\infty}\frac{|a_{2k+2}x^{2k+2}|}{|a_{2k}x^{2k}|}=\lim\limits_{k\to\infty}\frac{|p_0-2k||p_0+2k+1|}{(2k+1)(2k+2)}|x|^2=|x|^2\]
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]{\textbf{Ecuación de Legendre}}
+La serie tiene radio de convergencia 1. La misma situación ocurre con la serie de términos impares. Esto muestra que la serie en su conjunto tambien tiene radio de convergencia igual a 1.
+
+
+\end{frame}
+
+
+\begin{frame}[fragile]{\textbf{Ecuación de Legendre}}
+
+\begin{sympyblock}[][numbers=left,frame=single,framesep=5mm]
+from sympy import *
+a=symbols('a0:8')
+x,p=symbols('x,p')
+y=sum([a[i]*x**i for i in range(8)])
+Ecua=(1-x**2)*y.diff(x,2)-2*x*y.diff(x)+p*(p+1)*y
+Ecuaciones=[Ecua.diff(x,i).subs(x,0)/factorial(i)\
+    for i in range(8)]
+Ecuaciones=Ecuaciones[:-2]
+a_sol=solve(Ecuaciones,a[2:])
+for ind in a[2:]:
+    a_sol[ind].factor()
+\end{sympyblock}
+
+\end{frame}
+
+
+\begin{frame}[fragile]{\textbf{Ecuación de Legendre}}
+
+\begin{sympycode}[][numbers=left,frame=single,framesep=5mm]
+print(r'\begin{align*}') 
+for ind in a[2:]:
+    print(latex(ind)+'&='+latex(a_sol[ind].factor())+r'\\') 
+print(r'\end{align*}')
+\end{sympycode}
+
+
+\end{frame}
+
+\begin{frame}[fragile]{\textbf{Ecuación de Legendre}}
+{\small
+\boxedeq{%
+    \begin{split}
+        a_{2n}&=\frac{(p+1)(p+3)\cdots (p+2n-1) \times p(p-2)\cdots (p-2n+2)}{(2n)!}a_0\\
+        a_{2n+1}&=\frac{(p+2)(p+4)\cdots (p+2n) \times (p-1)(p-3)\cdots (p-2n+1)}{(2n+1)!}a_1
+    \end{split}}%
+    {}
+}
+
+\end{frame}
+
+\begin{frame}[fragile]{\textbf{Ecuación de Legendre, caso $p\in\mathbb{N}$ }}
+
+ En esa situación
+ 
+ \boxedeq{\forall n: n>p \wedge n\equiv p (2)\Rightarrow a_n =0}{}
+ 
+ Hay dos casos
+ 
+ \textbf{Caso $p$ es entero positivo impar}  Tomamos $a_0=0$
+  
+  \textbf{Caso $p$ es entero positivo par}  Tomamos $a_1=0$
+ 
+ Eligiendo de esta manera
+  \boxedeq{\forall n: n>p \Rightarrow a_n =0}{}
+ 
+ Es decir la solución es un polinomio.
+ \end{frame}
+
+\begin{frame}[fragile]{\textbf{Polinomios de Legendre}}
+ \begin{block}{\textbf{Definición: polinomios de Legendre}}
+  El \emph{polinomio de Legendre} $P_n$ de orden $n$ se define como la solución $y(x)$ descripta arriba donde además se elige $a_0$ (o $a_1$ acorde a cual de los dos no lo tomamos igual a 0) de modo que $y(1)=1$. 
+ \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{\textbf{Programando polinomios de Legendre }}
+
+{\scriptsize
+\begin{sympyblock}[][numbers=left,frame=single,framesep=5mm]
+def Legendre(n):
+    orden=n+2
+    a=symbols('a0:%s' %orden)
+    x=symbols('x')
+    y=sum([a[i]*x**i for i in range(orden)])
+    Ecua=(1-x**2)*y.diff(x,2)\
+        -2*x*y.diff(x)+n*(n+1)*y
+    Ecuaciones=[Ecua.diff(x,i).subs(x,0)/factorial(i)\
+        for i in range(orden-2)]
+    s=symbols('s')
+    if n%2==0:
+        Ecuaciones+=[a[0]-s,a[1]]
+    else:
+        Ecuaciones+=[a[0],a[1]-s]
+    Sol_a_n=solve(Ecuaciones,a)
+    y=y.subs(Sol_a_n)
+    sol=solve(y.subs(x,1)-1,s)
+    return y.subs(s,sol[0])
+\end{sympyblock}
+}
+
+
+\end{frame}
+
+\begin{frame}[fragile]{\textbf{Programando polinomios de Legendre }}
+
+
+
+\begin{sympyblock}[][numbers=left,frame=single,framesep=5mm]
+for n in range(1,6):
+    Legendre(n)
+\end{sympyblock}
+\begin{sympycode}[][numbers=left,frame=single,framesep=5mm]
+print(r'\begin{align*}') 
+for n in range(1,6):
+    print(r'P_'+latex(n)+'(x)&='+latex(Legendre(n))+r'\\') 
+print(r'\end{align*}')
+\end{sympycode}
+
+
+
+\end{frame}
+
+
+\begin{frame}[fragile]{\textbf{Graficando polinomios de Legendre }}
+
+\begin{sympyverbatim}[][numbers=left,frame=single,framesep=5mm]
+p=plot(Legendre(1),(x,-1,1),show=False)
+for n in range(2,8):
+    p1=plot(Legendre(n),(x,-1,1),show=False)
+    p.append(p1[0])
+p.show()
+\end{sympyverbatim}
+
+\end{frame}
+
+
+\begin{frame}[fragile]{\textbf{Graficando polinomios de Legendre }}
+\begin{figure}[h]
+\begin{center}
+\includegraphics[scale=.35]{legendre.png}
+\caption{Polinomios de Legendre hasta el orden 8}
+\end{center}
+\end{figure}
+\end{frame}
+
+
+
+\section{Teorema fundamental sobre puntos ordinarios}
+
+\subsection{Puntos ordinarios}
+
+\begin{frame}[fragile]{\textbf{Puntos ordinarios}}
+\begin{block}{Definición (puntos ordinarios)} Dada la ecuación diferencial
+\[y''(x)+p(x)y'(x)+q(x)y(x)=0\]
+donde $p,q$ son funciones   definidas en algún intervalo abierto $I$, diremos que $x_0\in I$ es un \emph{punto ordinario} de la ecuación si $p$ y $q$ son analíticas en $x_0$. Un punto no ordinario se llama \emph{singular}.
+\end{block}
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]{\textbf{Puntos ordinarios}}
+
+\textbf{Ejemplo } En la ecuación del oscilador armónico
+\[y''+\omega^2 y=0 \]
+todo punto es ordinario.
+
+
+\textbf{Ejemplo } En la ecuación de Legendre
+\[(1-x^2)y''-2xy'+p(p+1)y=0 \]
+$1$ y $-1$ son puntos singulares, otros valores de $x$ son puntos ordinarios.
+\end{frame}
+\subsection{Teorema }
+
+\begin{frame}[fragile]{\textbf{Teorema Fundamental Sobre Puntos Ordinarios}}
+\begin{block}{Teorema} Sea $x_0$ un punto ordinario de la ecuación
+\[y''(x)+p(x)y'(x)+q(x)y(x)=0\]
+y sean $a_0,a_1\in\mathbb{R}$. Existe una solución de la ecuación que es analítica en un entorno de $x_0$ y que satisface $y(x_0)=a_0$ e $y'(x_0)=a_1$. El radio de convergencia del desarrollo en serie de $y$ es al menos tan grande como el mínimo de los radios de convergencia de los desarrollos en serie de $p$ y $q$.
+\end{block}
+
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]{\textbf{Demostración Teorema Fundamental}}
+
+Supongamos que $x_0=0$. Desarrollemos en serie  $p$ y $q$.
+\begin{equation}\label{eq:series_p_q}p(x)=\sum_{n=0}^{\infty}p_nx^n\quad\text{y}\quad q(x)=\sum_{n=0}^{\infty}q_nx^n.
+\end{equation}
+Supongamos que ambas series convergen en $|x|<R$
+{\small
+\[
+    \begin{split}
+      y&=\sum_{n=0}^{\infty}a_nx^n=a_0+a_1x+\cdots+a_nx^n+\cdots\\
+      y'&=\sum_{n=0}^{\infty}(n+1)a_{n+1}x^n=a_1+2a_2x+\cdots+(n+1)a_{n+1}x^n+\cdots\\
+      y''&=\sum_{n=0}^{\infty}(n+1)(n+2)a_{n+2}x^n\\
+      &= 2a_2+2\cdot 3a_3x+\cdots+(n+1)(n+2)a_{n+2}x^n+\cdots.
+    \end{split}
+\]
+}
+
+\end{frame}
+
+\begin{frame}[fragile]{\textbf{Demostración Teorema Fundamental}}
+
+\[
+   \begin{split}
+     q(x)y&=\left(\sum_{n=0}^{\infty}a_nx^n\right)\left(\sum_{n=0}^{\infty}q_nx^n\right)=\sum_{n=0}^{\infty}\left(\sum_{k=0}^na_kq_{n-k}\right)x^n,\\
+     p(x)y'&=\left(\sum_{n=0}^{\infty}(n+1)a_{n+1}x^n\right)\left(\sum_{n=0}^{\infty}p_nx^n\right)\\
+     &=\sum_{n=0}^{\infty}\left(\sum_{k=0}^n(k+1)a_{k+1}p_{n-k}\right)x^n.
+   \end{split}
+\]
+Obtenemos
+\[\sum_{n=0}^{\infty}\left\{ (n+1)(n+2)a_{n+2}+ \sum_{k=0}^na_kq_{n-k}+ \sum_{k=0}^n(k+1)a_{k+1}p_{n-k} \right\}x^n.\]
+
+
+
+\end{frame}
+
+
+
+
+\section{Puntos singulares, método de Frobenius}
+
+
+\subsection{Series de Frobenius}
+
+
+\begin{frame}{\textbf{Singularidades}}
+
+
+\begin{block}{Sigularidades, Polos}  Diremos que $f$ posee un \emph{polo de orden $k$} en $x_0\in\rr$, si la función $(x-x_0)^kf(x)$ es analítica en un entorno de $x_0$. Es decir
+\[(x-x_0)^kf(x)=\sum_{n=0}^{\infty}a_n(x-x_0)^n.\]
+En consecuencia
+{\small
+\[f(x)=\sum_{n=0}^{\infty}a_n(x-x_0)^{n-k}=\frac{a_0}{(x-x_0)^k}+\cdots+\frac{a_{k-1}}{(x-x_0)}+a_k+a_{k+1}(x-x_0)+\cdots.\]
+}
+Este tipo de desarrollo es una  \emph{serie de Laurent}.
+
+Cuando el orden de un polo es $1$ se lo denomina \emph{polo simple}.
+\end{block}
+
+\end{frame}
+
+
+\begin{frame}{\textbf{Singularidades de ecuaciones}}
+\begin{block}{Singularidades regulares} Un punto singular $x_0$ de la ecuación
+\[y''(x)+p(x)y'(x)+q(x)y(x)=0\]
+se llama \emph{singular regular} si $p(x)$ tiene un polo a lo sumo simple en $x_0$ y $q(x)$ tiene un polo a lo sumo de orden $2$ en $x_0$. Es decir
+\[(x-x_0)p(x)\quad\hbox{y}\quad (x-x_0)^2q(x)\]
+son analíticas en $x_0$.
+\end{block}
+
+\end{frame}
+
+
+\begin{frame}{\textbf{Singularidades de ecuaciones, ejemplos}}
+
+
+Algunas de las ecuaciones más importantes de la Física-Matemática tienen puntos singulares regulares.
+
+\textbf{Ejemplo } 1 y -1 son puntos singulares regulares de la ecuación de Legendre de orden $p$
+\[y''-\frac{2x}{1-x^2}y'+\frac{p(p+1)}{1-x^2}y=0\]
+
+
+
+\textbf{Ejemplo } 0 es un punto singular regular de la ecuación de Bessel de orden $p$
+\[y''+\frac{1}{x}y'+\left(1-\frac{p^2}{x^2}\right)y=0\]
+
+
+
+
+\end{frame}
+
+\begin{frame}{\textbf{Ejemplo: ecuación de Euler}}
+\textbf{Ejemplo } Consideremos la ecuación de Euler, para $p,q\in\rr$
+\[y''+\frac{p}{x}y'+\frac{q}{x^2}y=0\]
+o equivalentemente
+\[x^2y''+pxy'+qy=0\]
+Aquí es facil verificar que las funciones
+\[P(x):=\frac{p}{x}\quad\hbox{ y }\quad Q(x):= \frac{q}{x^2}\]
+satisfacen que
+\[\frac{Q'+2PQ}{Q^{\frac{3}{2}}}\quad\text{es constante.}\]
+
+
+\end{frame}
+
+\begin{frame}[fragile]{\textbf{Ejemplo: ecuación de Euler}}
+\emph{Ejercicio} Si en una ecuación de segundo orden $y''+P(x)y'+Q(x)y=0$
+se tiene
+\[\frac{Q'+2PQ}{Q^{\frac{3}{2}}}\quad\text{es constante,}\]
+entonces el cambio de variables 
+\[z=\int\sqrt{Q}dx,\]
+ reduce la ecuación a una de coeficientes constantes.
+ 
+ 
+En la ecuación de Euler, el cambio de variables que debemos hacer es
+\[z=\ln(x)\]
+
+
+
+\end{frame}
+
+\begin{frame}[fragile]{\textbf{Ejemplo: ecuación de Euler}}
+Asumimos $x>0$. La ecuación de Euler se transforma en
+\[y''+(p-1)y'+qy=0.\]
+Cuya ecuación característica es
+\[\lambda^2+(p-1)\lambda+q=0\]
+
+
+Cuyas raíces son 
+\[s_1= -\frac{p-1}{2} \pm \frac{\sqrt{p^2 - 2p - 4q + 1}}{2}   \quad .\]
+
+ Si $s_1\neq s_2$ dos soluciones linealmente independientes son:
+\[y_1(z)=e^{s_1z}\quad\hbox{y}\quad y_2(z)=e^{s_2z}\]
+
+ Si $s_1=s_2$
+\[y_1(z)=e^{s_1z} \quad\hbox{y}\quad y_2(z)=ze^{s_1z}\]
+ 
+
+\end{frame}
+
+\begin{frame}[fragile]{\textbf{Ejemplo: ecuación de Euler}}
+
+Asumamos que las raices $s_1$ y $s_2$ son reales, entonces como $z=\ln(x)$, las soluciones en términos de la variable $x$ son
+\[y_1(x)=x^{s_1}\quad\hbox{y}\quad y_2(x)=x^{s_2}\quad\text{para }  s_1\neq s_2\]
+y
+\[y_1(x)=x^{s_1} \quad\hbox{y}\quad y_2(x)=\ln(x)x^{s_1}\quad\text{para }  s_1= s_2\]
+
+\textbf{Observaciones  } 
+
+\begin{itemize}
+ \item Las funciones $y=x^s$, $s\in \rr$y $y=\ln(x)x^s$ no son analíticas en general en $x=0$.
+ 
+ \item \emph{El ejemplo nos enseña que en las ecuaciones (o al menos en la de Euler) con singularidades regulares aparecen potencias no enteras y logarítmos}
+\end{itemize}
+
+
+\end{frame}
+
+
+
+
+
+
+
+\begin{frame}[fragile]{\textbf{Serie de Frobenius}}
+
+\begin{block}{Definición} A una expresión de la forma
+ \[y(x)=(x-x_0)^m(a_0+a_1(x-x_0)+a_2(x-x_0)^2+\cdots),\]
+donde $m\in\rr$ y $a_0\neq 0$, lo llamaremos \emph{Serie de Frobenius}.
+\end{block}
+
+\begin{block}{Método de Frobenius}
+  Consiste en proponer como solución de una ecuación diferencial una serie de Frobenius. Este método tiene éxito, por ejemplo, en los puntos sigulares regulares de ecuaciones diferenciales lineales de segundo orden.
+
+\end{block}
+
+
+\end{frame}
+
+
+
+
+
+
+
+\begin{frame}[fragile]{\textbf{Método de Frobenius}}
+
+
+\textbf{Ejemplo }  Consideremos la ecuación
+\begin{equation}\label{eq:ejem_sim}y''+\left(\frac{1}{2x}+1\right)y'-\left(\frac{1}{2x^2}\right)y=0.
+\end{equation}
+$x=0$ es regular singular. 
+
+
+Proponemos como solución
+
+ \[y(x)=x^m\sum_{n=0}^{\infty}a_{n}x^n=\sum_{n=0}^{\infty}a_{n}x^{n+m}\]
+
+\end{frame}
+
+
+
+
+
+
+
+\begin{frame}[fragile]{\textbf{Método de Frobenius}}
+\vspace{-.5cm}
+{\small
+\[
+    \begin{split}
+    y&=\sum_{n=0}^{\infty}a_{n}x^{n+m}\\
+    -\frac{1}{2x^2}y&=-\sum_{n=0}^{\infty}\frac{a_n}{2}x^{m+n-2}=x^{m-2}\sum_{n=0}^{\infty}
+         \tikz[baseline]{
+                     \node[fill=red!50,anchor=base] (n1)
+                      {\textcolor{black}{$\left(-\frac{a_n}{2}\right)$}}}
+     x^{n}\\
+      y'&=\sum_{n=0}^{\infty}(m+n)a_{n}x^{m+n-1}=x^{m-2}\sum_{n=0}^{\infty}
+               \tikz[baseline]{
+                     \node[fill=red!50,anchor=base] (n2)
+                      {\textcolor{black}{$(m+n)a_{n}$}}}
+      x^{n+1}\\
+      \frac{1}{2x}y'&=\sum_{n=0}^{\infty}\frac{(m+n)a_{n}}{2}x^{m+n-2}=x^{m-2}\sum_{n=0}^{\infty}
+     \tikz[baseline]{
+                 \node[fill=red!50,anchor=base] (n3)
+               {\textcolor{black}{$\frac{(m+n)a_{n}}{2}$}}}
+      x^{n}\\
+      y''&=\sum_{n=0}^{\infty}(m+n)(m+n-1)a_{n}x^{m+n-2}\\
+&= x^{m-2}\sum_{n=0}^{\infty}
+     \tikz[baseline]{
+                 \node[fill=red!50,anchor=base] (n4)
+               {\textcolor{black}{$(m+n)(m+n-1)a_{n}$}}}
+x^{n}.
+    \end{split}
+\]
+}
+
+
+
+
+
+\end{frame}
+
+
+
+
+
+
+
+
+\begin{frame}[fragile]{\textbf{Método de Frobenius}}
+Obtenemos infinitas ecuaciones para los $an$. \emph{Conviene separar la primera del resto}
+
+\begin{equation}\label{eq:ecua_ejem_frob}
+    \begin{split}
+         &\tikz[baseline]{
+                 \node[fill=yellow!50,anchor=base] (n1)
+               {\textcolor{black}{$\frac12\left(2m+1\right)(m-1) a_0=0$}}}
+      \\
+     &\left(   2a_{n-1}+ (2(m+n)+1)a_{n}  \right)(m+n-1) =0,\quad n\geq 1\\
+    \end{split}
+\end{equation}
+
+  \uncover<2->{\tikz[baseline]{
+      \node[fill=red!50,anchor=base,color=green!50] (t1)
+           {\textcolor{black}{Ecuación Indicial}}}
+           } %
+\uncover<2->{
+
+\begin{tikzpicture}[overlay, line width=1.5]
+    %\draw[->,very thick] (t1) -- (n1);
+	\path[->]<1-> (n1.west) edge  [out=180,in=180]  (t1.west);
+\end{tikzpicture}
+}
+  
+
+
+
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]{\textbf{Método de Frobenius}}
+
+
+
+\boxedeq{a_{n}=-\frac{2a_{n-1}}{2(m+n)+1},\quad n\geq 1.}{eq:recu_ecua_ejem_frob}
+
+Ecuación Indicial $\Rightarrow m=1 \wedge m=-\frac12$. 
+
+Si $m=1$.
+
+\[
+a_{n}=-\frac{2a_{n-1}}{2n+3},\quad n=-1,0,\ldots.
+\]
+
+Para el radio de convergencia
+
+\[\lim_{n\to\infty}\frac{|a_{n}x^{n}|}{|a_{n-1}x^{n-1}|}=
+\lim_{n\to\infty}\frac{2|x|}{2n+3}=0.\]
+Por consiguiente $R=\infty$.  
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]{\textbf{Método de Frobenius}}
+Iterando la relación de recurrencia llegamos
+\begin{multline*}
+ a_{n}=-\frac{2}{2n+3}a_{n-1}=\frac{2}{(2n+3)(2n+1)}a_{n-2}=\cdots\\
+ =
+\frac{(-1)^n2^{n}}{(2n+3)(2n+1)\cdots 5}a_0.
+\end{multline*}
+
+Si elegimos $a_0=1$ obtenemos la solución
+\boxedeq{y_1(x)=x\sum_{n=0}^{\infty}(-1)^n\frac{2^{n}}{(2n+3)(2n+1)\cdots 5}x^n.}{}
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]{\textbf{Método de Frobenius}}
+Cuando $m=-\frac12$, la relación de recurrencia es
+\[a_{n}=-\frac{a_{n-1}}{n}.\]
+Por ende, si $a_0=1$,
+\[a_n=-\frac{a_{n-1}}{n}=\frac{1}{n(n-1)}a_{n-2}=\cdots=\frac{(-1)^n}{n!}a_{0}=\frac{(-1)^n}{n!}.\]
+Conseguimos la solución
+\boxedeq{y_2(x)=x^{-\frac12}\sum_{n=0}^{\infty}\frac{(-1)^n}{n!}x^n=\frac{e^{-x}}{\sqrt{x}}}{}
+Como $y_1(0)=0$ y $\lim_{x\to 0+}y_2(x)=+\infty$ no es posible $c_1y_1+c_2y_2=0$ a menos que $c_1=c_2=0$. Las soluciones son L.I.
+
+
+
+
+\end{frame}
+
+
+
+
+
+
+
+\begin{frame}[fragile]{\textbf{Usando SymPy}}
+
+
+\begin{sympyblock}[][numbers=left,frame=single,framesep=5mm]
+orden=5
+a=symbols('a0:%s' %orden)
+x,m=symbols('x,m')
+y=x**m*sum([a[i]*x**i for i in range(orden)])
+Ecua=y.diff(x,2)+(1/(2*x)+1)*y.diff(x,1)\
+    -(1/(2*x**2))*y
+Ecua=Ecua/x**(m-2)
+Ecua=Ecua.expand()
+Ecuaciones=[Ecua.diff(x,i).subs(x,0)/factorial(i)\
+    for i in range(orden)]
+\end{sympyblock}
+\end{frame}
+
+
+
+\begin{frame}[fragile]{\textbf{Usando SymPy}}
+
+\begin{sympycode}[][numbers=left,frame=single,framesep=5mm]
+print(r'\begin{align*}') 
+for ind in Ecuaciones:
+    print('0&='+latex(ind.factor())+r'\\') 
+print(r'\end{align*}')
+\end{sympycode}
+\end{frame}
+
+\begin{frame}[fragile]{\textbf{Usando SymPy}}
+
+
+\begin{sympyblock}[][numbers=left,frame=single,framesep=5mm]
+Sol_Ecua_Ind=solve(Ecuaciones[0],m)
+\end{sympyblock}
+
+\[m\in \sympy{Sol_Ecua_Ind}.\]
+
+
+
+
+\begin{sympyblock}[][numbers=left,frame=single,framesep=5mm]
+Ecuaciones1=[ec.subs(m,Sol_Ecua_Ind[1])\
+    for ec in Ecuaciones]
+Ecuaciones1[0]=a[0]-1
+sol=solve(Ecuaciones1,a)
+y1=y.subs(sol).subs(m,Sol_Ecua_Ind[1])
+\end{sympyblock}
+
+
+
+\end{frame}
+
+\begin{frame}[fragile]{\textbf{Usando SymPy}}
+
+
+\[
+ y_1(x)=\sympy{y1}
+\]
+La segunda solución 
+
+\begin{sympyblock}[][numbers=left,frame=single,framesep=5mm]
+Ecuaciones2=[ec.subs(m,Sol_Ecua_Ind[0])\
+    for ec in Ecuaciones]
+Ecuaciones2[0]=a[0]-1
+sol=solve(Ecuaciones2,a)
+y2=y.subs(sol).subs(m,Sol_Ecua_Ind[0])
+\end{sympyblock}
+\[
+ y_2(x)=\sympy{y2}
+\]
+\end{frame}
+
+
+
+\subsection{Ecuación de Bessel, funciones de Bessel de primera especie}\label{sec:bessel_1}
+\subsubsection{Relaciones de recurrencia y solución por el método de Frobenius}
+
+\begin{frame}[fragile]{\textbf{Ecuación de Bessel}}
+
+\begin{block}{Definición} Recordemos a la ecuación de Bessel de orden $p$ ($p>0$)
+ \[y''+\frac{1}{x}y'+\left(1-\frac{p^2}{x^2}\right)y=0\]
+\end{block}
+
+En $x=0$ la ecuación de Bessel tiene un punto  singular regular. Vamos a aplicarle el método de Frobenius. Trabajeremos exclusivamente con SymPy.
+\end{frame}
+
+
+\begin{frame}[fragile]{\textbf{Ecuación de Bessel}}
+\begin{sympyblock}[][numbers=left,frame=single,framesep=5mm]
+orden=8
+a,x,m,p=symbols(['a0:%s' %orden, 'x','m','p'] )
+y=x**m*sum([a[i]*x**i for i in range(orden)])
+EDif=y.diff(x,2)+1/x*y.diff(x,1)+(1-p**2/x**2)*y
+EDif=(EDif/x**(m-2)).simplify()
+ECoef=[EDif.diff(x,i).subs(x,0)/factorial(i)\
+    for i in range(orden)]
+SolEInd=solve(ECoef[0],m)
+\end{sympyblock}
+
+Las raíces de la ecuación indicial son
+\boxedeq{m=\sympy{SolEInd[0]}\quad\text{y}\quad m=\sympy{SolEInd[1]}}{eq:sol_ec_ind}
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]{\textbf{Ecuación de Bessel, $m=p$}}
+
+
+
+\begin{sympyblock}[][numbers=left,frame=single,framesep=5mm]
+ECoefA=[ec.subs(m,SolEInd[1]) for ec in ECoef]
+\end{sympyblock}
+
+\begin{sympycode}[][numbers=left,frame=single,framesep=5mm]
+print(r'\begin{align*}') 
+for ec in ECoefA:
+    print('0&='+latex(ec.factor())+r'\\') 
+print(r'\end{align*}')
+\end{sympycode}
+
+
+
+
+\end{frame}
+
+
+\begin{frame}[fragile]{\textbf{Ecuación de Bessel, $m=p$}}
+Se puede observar que estas ecuaciones relacionan  $a_n$ con $a_{n-2}$, i.e. que son relaciones de dos términos.  Podemos hacer explícita la relación
+
+
+
+
+
+\begin{sympyblock}[][numbers=left,frame=single,framesep=5mm]
+for i in range(1,orden):
+    iter=solve(ECoefA[i],a[i])[0].factor()
+    print(str(a[i])+'='+str(iter))
+\end{sympyblock}
+\end{frame}
+
+
+\begin{frame}[fragile]{\textbf{Ecuación de Bessel, $m=p$}}
+\begin{sympycode}[][numbers=left,frame=single,framesep=5mm]
+print(r'\begin{align*}') 
+for i in range(1,orden):
+    iter=solve(ECoefA[i],a[i])[0].factor()
+    print(latex(a[i])+'&='+latex(iter.factor())+r'\\') 
+print(r'\end{align*}')
+\end{sympycode}
+
+
+\end{frame}
+
+
+\begin{frame}[fragile]{\textbf{Ecuación de Bessel, $m=p$}}
+
+\textbf{Observación.}
+ La ecuación $a_1(2p+1)=0$ no fue correctamente resuelta por SymPy. SymPy consigna la solución $a_1=0$, pero si  $p=-1/2$ cualquier $a_1$ es solución. Este caso lo estudiaremos separadamente después, por ahora supondremos $p\neq -1/2$. 
+ \end{frame}
+
+
+\begin{frame}[fragile]{\textbf{Ecuación de Bessel, $m=p$}}
+ 
+
+Tendremos  $a_n=0$ cuando $n$ es impar.
+
+La relación de recurrencia  es
+\boxedeq{a_{2n}=-\frac{1}{4n(p+n)}a_{2n-2}}{eq:recu_bessel}
+Iterando esta relación
+\[
+\begin{split}
+  a_{2n}&=-\frac{1}{4n(p+n)}a_{2n-2}\\
+       &=\frac{1}{4n(p+n-1)}\cdot\frac{1}{4(n-1)(p+n-1)}a_{2n-4}=\cdots\\
+       & =(-1)^n\frac{1}{4^nn!(p+n)(p+n-1)\cdots (p+1)}a_{0}.
+\end{split}
+\]
+
+ \end{frame}
+
+
+\begin{frame}[fragile]{\textbf{Ecuación de Bessel, $m=p$}}
+
+Obtenemos la solución
+\boxedeq{y(x)=x^p\sum_{n=0}^{\infty}\frac{(-1)^na_0}{4^nn!(p+n)(p+n-1)\cdots (p+1)}x^{2n}}{eq:sol_bessel_1}
+Más adelante veremos que cierta elección especial de $a_0$ no lleva a lo que denominaremos \emph{funciones de Bessel}.
+\end{frame}
+
+
+
+
+\subsubsection{Función Gamma y la función de Bessel de primera especie}
+
+\begin{frame}[fragile]{\textbf{Función Gamma}}
+
+
+\begin{block}{Definición} Para $p>0$ definimos la \emph{función Gamma} por
+\begin{equation}\label{eq:gamma}\Gamma(p):=\int_0^{\infty}t^{p-1}e^{-t}dt
+\end{equation}
+\end{block}
+
+
+\textbf{Propiedades}
+\boxedeq{\begin{split}\Gamma(1)&=1\\
+ \Gamma(p+1)&=p\Gamma(p)\end{split}}{eq:recu_gamma}
+ 
+Si $p=n\in\nn$ 
+
+\[\Gamma(n+1)=n\Gamma(n)=\cdots=n!\Gamma(1)=n!.\]
+\end{frame}
+
+
+
+\begin{frame}[fragile]{\textbf{Función Gamma}}
+
+
+
+\begin{block}{Definición $\Gamma(p)$ para $-1<p<0$}
+ 
+
+\boxedeq{\Gamma(p):=\frac{\Gamma(p+1)}{p}.}{eq:gama_iter}
+Observar que el segundo miembro esta bien definido pues $p+1>0$. 
+
+\end{block}
+\end{frame}
+
+
+
+\begin{frame}[fragile]{\textbf{Función Gamma}}
+
+\[\lim_{p\to 0+}\Gamma(p)=\lim_{p\to 0+}\frac{\Gamma(p+1)}{p}=+\infty.\]
+
+\[\lim_{p\to 0-}\Gamma(p)=\lim_{p\to 0-}\frac{\Gamma(p+1)}{p}=-\infty.\]
+y
+\[\lim_{p\to -1+}\Gamma(p)=\lim_{p\to -1+}\frac{\Gamma(p+1)}{p}=-\infty.\]
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]{\textbf{Función Gamma}}
+
+
+Ahora podemos extender $\Gamma$ a $p\in (-2,1)$. Pues  podemos usar la fórmula \eqref{eq:gama_iter} y el hecho de que ya tenemos definida la función Gamma en $(-1,0)$. Continuando de esta forma, definimos $\Gamma$ para cualquier valor de $p<0$ y $p\notin \mathbb{Z}$. Si $n$ es un entero negativo ocurre que
+\[\lim_{p\to n+}\Gamma(p)=(-1)^n\infty\quad\text{y}\quad \lim_{p\to n-}\Gamma(p)=(-1)^{n-1}\infty.\]
+
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]{\textbf{Función Gamma}}
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[scale=.4]{gamma.png}
+\caption{La función gamma $\Gamma$}
+\end{center}
+\end{figure}
+
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]{\textbf{Función de Bessel de primera especie}}
+
+
+
+\begin{block}{Definición} Tomando  $a_0=1/2^p\Gamma(p+1)$ en 
+\eqref{eq:sol_bessel_1} definimos la \emph{función de Bessel de primera especie} 
+\[J_p(x)=\sum_{n=0}^{\infty}\frac{(-1)^n}{n!\Gamma(p+n+1)}\left(\frac{x}{2}\right)^{2n+p}\]
+\end{block}
+
+
+\begin{sympyblock}[][numbers=left,frame=single,framesep=5mm]
+p,x=symbols('p,x')
+J= sum([(-1)**n/factorial(n)/gamma(p+n+1)\
+    *(x/2)**(2*n+p) for n in range(30)])
+\end{sympyblock}
+\end{frame}
+
+
+
+\begin{frame}[fragile]{\textbf{Función de Bessel de primera especie}}
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[scale=.35]{bessel.png}
+\end{center}
+
+\caption{Funciones de Bessel $J_p$, $p=1,2,3$}\label{fig:bessel}
+
+\end{figure}
+
+\end{frame}
+
+
+
+
+
+\begin{frame}[fragile]{\textbf{Caso $m=-p$ y $2p\notin\nn$}}
+
+
+
+
+\begin{sympyblock}[][numbers=left,frame=single,framesep=5mm]
+ECoefA=[ec.subs(m,SolEInd[0]) for ec in ECoef]
+\end{sympyblock}
+
+\begin{sympycode}[][numbers=left,frame=single,framesep=5mm]
+print(r'\begin{align*}') 
+for ec in ECoefA:
+    print('0&='+latex(ec.factor())+r'\\') 
+print(r'\end{align*}')
+\end{sympycode}
+
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]{\textbf{Caso $m=-p$ y $2p\notin\nn$}}
+
+
+Son las mismas ecuaciones \eqref{eq:recu_bessel} con $-p$ en lugar de $p$. 
+
+\boxedeq{a_{n}=\frac{a_{n-2}}{n(2p-n)}}{eq:rel_recu_bess-p}
+
+
+
+\textcolor{red}{Atención!} Si $p\in\frac12\mathbb{N}=\frac12,1,\frac32,\ldots$  la expresión en el denominador en la relación
+se puede anular.  Esto ocurre cuando  $p-(-p)=2p\in\nn$.
+\end{frame}
+
+
+
+\begin{frame}[fragile]{\textbf{Caso $m=-p$ y $p\notin\nn$}}
+Si $p=\frac{2k+1}{2}$ el problema se resuelve. Pues para $n=2k+1$
+
+\[0=n(2p-n)a_n=a_{n-2}= \frac{a_{n-4}}{(n-2)(2p-n+2)}=\cdots=
+ \text{Factor}\times a_1=0
+\]
+  De modo que la ecuación para $n=2k+1$ se satisface.
+
+Cuando $p=0$  hay una única solución en serie de Frobenius pues $p=-p$.
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]{\textbf{Caso $m=-p$ y $p\notin\nn$}}
+
+
+\begin{block}{Función de Bessel $J_{-p}$ ($p\notin\nn$)}Si $p\notin\mathbb{N}$ definimos
+\boxedeq{J_{-p}(x)=\sum_{n=0}^{\infty}\frac{(-1)^n}{n!\Gamma(-p+n+1)}\left(\frac{x}{2}\right)^{2n-p}}{}
+\end{block}
+
+Más adelante justificaremos que $J_p$ y $J_{-p}$ son linealmente independientes, por tanto
+\boxedeq{y=c_1J_p+c_2J_{-p}}{eq:sol_gen_bessel_1}
+es la solución general de la ecuación de Bessel
+
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]{\textbf{Caso $m=-p$ y $p\notin\nn$}}
+\begin{figure}[h]
+\begin{center}
+\includegraphics[scale=.35]{bessel2.png}
+\end{center}
+\caption{Funciones de Bessel $J_{-1/3}$, $J_{-2/3}$ y $J_{-5/3}$.}
+\end{figure}
+
+\end{frame}
+
+
+
+\subsection{Funciones de Bessel  de segunda especie}
+\begin{frame}[fragile]{\textbf{Funciones de Bessel  de segunda especie}}
+
+Ahora volvamos al caso $p\in\mathbb{Z}$ La idea es expresar la segunda solución para  $p=n\in\mathbb{Z}$ como límite de soluciones  de la forma  \eqref{eq:sol_gen_bessel_1} cuando $p\to n$. Más concretamente.
+
+\begin{block}{Definición} Para $p\notin\mathbb{Z}$ definimos la función de Bessel $Y_p$ de segunda especie por
+\begin{equation}\label{eq:bessel_2_especie}
+Y_p=\frac{\cos p\pi J_p-J_{-p}}{\sen p\pi}.
+\end{equation}
+\end{block}
+
+La función $Y_p$ es una solución puesto que es una expresión del tipo \eqref{eq:sol_gen_bessel_1}. Además es no acotada cerca de $0$ dado que $J_p$ es acotada y $J_{-p}$ no. 
+
+\end{frame}
+
+
+
+
+
+\begin{frame}[fragile]{\textbf{Funciones de Bessel  de segunda especie}}
+
+
+La razón de esta llamativa definición es el siguiente resultado.
+
+
+
+
+\begin{block}{Lema} Para $n$ entero no negativo,  el  límite $\lim_{p\to n}Y_p$ existe. Por consiguiente, podemos definir
+\begin{equation}\label{eq:bessel_2_especie_b}
+Y_n(x):=\lim_{p\to n}Y_p(x).
+\end{equation}
+Esta función es solución de la ecuación de Bessel de orden $n$ y se denomina, también, \emph{función de Bessel de segunda especie o Funciones de Neumann}. También resulta ser una función no acotada cerca de $0$ y por consiguiente, linealmente idependiente de $J_n$.
+\end{block}
+
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]{\textbf{Funciones de Bessel  de segunda especie}}
+
+
+Se puede demostrar que 
+$$
+Y_{0}(x)=\frac{2}{\pi}\left[\left(\gamma+\ln \frac{x}{2}\right) J_{0}(x)+\sum_{m=1}^{\infty} \frac{(-1)^{m+1} H_{m}}{2^{2 m}(m !)^{2}} x^{2 m}\right], \quad x>0
+$$
+
+
+
+donde
+$$
+H_{n}=\frac{1}{n}+\frac{1}{n-1}+\cdots+\frac{1}{2}+1
+$$
+y  $\gamma$ es la \emph{constante de Euler-Máscheroni} que se define por la ecuación
+$$
+\gamma=\lim _{n \rightarrow \infty}\left(H_{n}-\ln n\right) \cong 0.5772\ldots .
+$$
+\end{frame}
+
+\subsection{Teorema fundamental sobre puntos singulares regulares}
+
+\begin{frame}[fragile]{\textbf{Relación recurrencia general}}
+
+Supongamos $x=0$ un punto regular singular de la ecuación
+
+\begin{equation}\label{eq:dif_2_orden} y''+p(x)y'+q(x)y=0.
+\end{equation}
+
+Supongamos que
+
+\[xp(x)=\sum_{n=0}^{\infty}p_nx^n\quad\text{y}\quad x^2q(x)=\sum_{n=0}^{\infty}q_nx^n\]
+Proponemos como solución
+\[y=x^{m}\sum_{n=0}^{\infty}a_nx^n=\sum_{n=0}^{\infty}a_nx^{m+n}.\]
+
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]{\textbf{Relación recurrencia general}}
+
+\begin{subequations}
+    \begin{align}
+      y'&=\sum_{n=0}^{\infty}(m+n)a_{n}x^{m+n-1}\\
+      y''&=\sum_{n=0}^{\infty}(m+n)(m+n-1)a_{n}x^{m+n-2}\notag\\
+&=x^{m-2}\sum_{n=0}^{\infty}(m+n)(m+n-1)a_{n}x^{n}\label{eq:der_seg} .
+    \end{align}
+  \end{subequations}
+
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]{\textbf{Relación recurrencia general}}  
+
+\begin{equation}\label{eq:der_pri}
+  \begin{split}
+    p(x)y'(x)&=\frac{1}{x}\left(\sum_{n=0}^{\infty}p_nx^n\right)\left(\sum_{n=0}^{\infty}(m+n)a_{n}x^{m+n-1}\right)\\
+&=x^{m-2}\left(\sum_{n=0}^{\infty}p_nx^n\right)\left(\sum_{n=0}^{\infty}(m+n)a_{n}x^{n}\right)\\
+&= x^{m-2}\sum_{n=0}^{\infty}\left(\sum_{k=0}^np_{n-k}(m+k)a_k\right)x^n\\
+&= x^{m-2}\sum_{n=0}^{\infty}\left(\sum_{k=0}^{n-1}p_{n-k}(m+k)a_k+p_0(m+n)a_n\right)x^n
+  \end{split}
+\end{equation}
+
+
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]{\textbf{Relación recurrencia general}}
+
+\begin{equation}\label{eq:der_cero}
+  \begin{split}
+    q(x)y(x)&=\frac{1}{x^2}\left(\sum_{n=0}^{\infty}q_nx^n\right)\left(\sum_{n=0}^{\infty}a_{n}x^{m+n}\right)\\
+&=x^{m-2}\left(\sum_{n=0}^{\infty}q_nx^n\right)\left(\sum_{n=0}^{\infty}a_{n}x^{n}\right)\\
+&= x^{m-2}\sum_{n=0}^{\infty}\left(\sum_{k=0}^nq_{n-k}a_k\right)x^n\\
+&= x^{m-2}\sum_{n=0}^{\infty}\left(\sum_{k=0}^{n-1}q_{n-k}a_k+q_0a_n\right)x^n
+  \end{split}
+\end{equation}
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]{\textbf{Relación recurrencia general}}
+
+
+A partir de \eqref{eq:dif_2_orden}, \eqref{eq:der_cero},\eqref{eq:der_pri} y \eqref{eq:der_seg} obtenemos
+\begin{equation}
+\begin{split}
+  0=&x^{m-2}\sum_{n=0}^{\infty}\bigg\{\left[(m+n)(m+n-1)+p_0(m+n)  +q_0  \right] a_{n}\\&+\sum_{k=0}^{n-1}a_k\left[p_{n-k}(m+k) +
+q_{n-k}\right]\bigg\}x^n.
+\end{split}
+\end{equation}
+Entonces se debe satisfacer
+
+
+
+\boxedeq{
+\begin{split}
+&\left[(m+n)(m  +n-1)+ p_0(m+n)  +q_0  \right] a_{n}\\
+    &+\sum_{k=0}^{n-1}a_k\left[p_{n-k}(m+k) +
+    q_{n-k}\right]=0,\\
+\end{split}
+}{eq:recu_gral_frob}
+
+
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]{\textbf{Relación recurrencia general}}
+
+
+
+Definimos
+\boxedeq{f(m)=m(m-1)+p_0m+q_0.}{eq:func_f}
+Entonces \eqref{eq:recu_gral_frob} se escribe
+
+\boxedeq{f(m+n)a_n=-\sum_{k=0}^{n-1}a_k\left[p_{n-k}(m+k) +
+q_{n-k}\right],\quad n=0,1,\ldots}{eq:recu_gral_frob_2}
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]{\textbf{Relación recurrencia general}}
+
+La primera de estas ecuaciones es
+\begin{block}{Definición } Definimos la  \emph{ecuación indicial} por
+\begin{equation}\label{eq:eq_indicial}
+  f(m)=m(m-1)+p_0m+q_0=0.
+\end{equation}
+
+\end{block}
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]{\textbf{¿Cuándo es posible resolver las relaciones de recurrencia? }}
+
+\textcolor{red}{Suposición: } las raíces de la ecuación indicial son reales y  
+$m_2\leq m_1$.
+
+
+
+El único problema que podría ocurrir es que  
+
+\[f(m+n)=0\]
+
+para algún valor de $n=1,2,\ldots$.  
+
+
+\emph{Esto ocurre solo si $m=m_2$ y $m_1-m_2\in\nn$.}
+
+
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]{\textbf{Caso problemático $m=m_2$, $m_1=m_2+n$}}
+
+Las $n$-ésima relación de recurrencia es:
+
+\begin{equation}\label{eq:ec_enter} 0=-\sum_{k=0}^{n-1}a_k\left[p_{n-k}(m+k) +
+q_{n-k}\right].
+\end{equation}
+
+Pero los coeficientes $a_k$, $k=0,\ldots,n-1$ ya fueron determinados y la relación \emph{podría} no cumplirse.
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]{\textbf{Relación recurrencia general}}
+
+
+\begin{block}{Conclusiones}
+ \begin{itemize}
+  \item Si $m=m_1$ existe una solución para $a_n$, $n\geq 1$ para cualquier $a_0$ dado y $m=m_1$.
+  \item Si $m_1-m_2\notin \nn$ existe una solución para $a_n$, $n\geq 1$ para cualquier $a_0$ dado y $m=m_2$.
+  \item Si $m_1=m_2$ hay sólo una solución en serie de Frobenius.
+  \item Si $m_1-m_2=n\in \nn$ puede haber o no haber una segunda solución.
+ \end{itemize}
+
+\end{block}
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]{\textbf{Independencia lineal}}
+
+\emph{Si $m_2<m_1$ y hay dos soluciones, ellas resultan  L.I.} pues si  estas soluciones son
+\[y_1=x^{m_1}\sum_{n=0}^{\infty}a_nx^n\quad\text{y}\quad y_2=x^{m_2}\sum_{n=0}^{\infty}b_nx^n,\]
+con $a_0\neq 0\neq b_0$ y si  $y_1/y_2$ fuera una constante $c$  no nula. Entonces
+
+\[c=\lim_{x\to 0} \frac{y_1}{y_2}=\lim_{x\to 0} x^{m_1-m_2}\frac{\sum_{n=0}^{\infty}a_nx^n}{ \sum_{n=0}^{\infty}b_nx^n  }=0.\frac{a_0}{b_0}=0.\]
+
+
+
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]{\textbf{Si no hay una segunda solución en serie de Frobenius}}
+\emph{Método de reducción de orden a partir de la solución conocida $y_1=x^{m_1}\sum_{n=0}^{\infty}a_nx^n$.}
+
+\[y_2(x)=v(x)y_1(x),\quad\text{donde  } v'(x)=\frac{1}{y_1^2}e^{-\int p(x)dx}.\]
+Teniendo en cuenta que
+\[p(x)=\sum_{n=0}^{\infty}p_nx^{n-1}=\frac{p_0}{x}+p_1+p_2x+\cdots.\]
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]{\textbf{Si no hay una segunda solución en serie de Frobenius}}
+
+\[
+   \begin{split}
+     v'(x)&=\frac{1}{x^{2m_1}\left(\sum_{n=0}^{\infty}a_nx^n\right)^2}e^{-\int \left(\frac{p_0}{x}+p_1+p_2x+\cdots \right)dx}\\
+  &= \frac{1}{x^{2m_1}\left(\sum_{n=0}^{\infty}a_nx^n\right)^2}e^{-p_0 \ln x -p_1x-\cdots }\\
+  &= \frac{1}{x^{2m_1+p_0}\left(\sum_{n=0}^{\infty}a_nx^n\right)^2}e^{ -p_1x-\cdots }
+   \end{split}
+\]
+
+La función
+\[
+  g(x)= \frac{ e^{ -p_1x-\cdots } }{\left(\sum_{n=0}^{\infty}a_nx^n\right)^2},
+\]
+es analítica en $0$ puesto que el denominador no se anula en cero. 
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]{\textbf{Si no hay una segunda solución en serie de Frobenius}}
+
+
+Por consiguiente tenemos un desarrollo en serie
+\[ g(x)=\sum_{n=0}^{\infty}b_nx^n, \quad b_0\neq 0.\]
+
+Llamemos 
+
+\[k:=2m_1+p_0.\]
+
+Se tiene que 
+
+\[m_1+m_2=1-p_0.\] 
+
+\[2m_1+p_0=2m_1+1-m_1-m_2=m_1-m_2+1\in\mathbb{N}\].
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]{\textbf{Si no hay una segunda solución en serie de Frobenius}}
+
+Tenemos que
+\[v'(x)=\frac{b_0}{x^k}+ \frac{b_1}{x^{k-1}}+\cdots+\frac{b_{k-1}}{x}+b_{k}+\cdots\]
+Entonces
+\[v(x)=\frac{b_0}{(-k+1)x^{k-1}}+ \frac{b_1}{(-k+2)x^{k-2}}+\cdots+b_{k-1}\ln x+b_{k}x+\cdots\]
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]{\textbf{Si no hay una segunda solución en serie de Frobenius}}
+
+Reemplazando esta identidad en la expresión para $y_2$,
+\[
+   \begin{split}
+     y_2&=vy_1\\
+&=y_1\left(\frac{b_0}{(-k+1)x^{k-1}}+ \frac{b_1}{(-k+2)x^{k-2}}+\cdots+b_{k-1}\ln x+b_{k}x+\cdots\right)\\
+       &=b_{k-1}\ln x y_1+ x^{m_1}\sum_{n=0}^{\infty}a_nx^n\left(\frac{b_0}{(-k+1)x^{k-1}}+ \frac{b_1}{(-k+2)x^{k-2}}\cdots\right)\\
+       &=b_{k-1}\ln x y_1+ x^{m_1-k+1}\sum_{n=0}^{\infty}a_nx^n\left(\frac{b_0}{(-k+1)}+ \frac{b_1}{(-k+2)}x+\cdots\right)\\
+   \end{split}
+\]
+Ahora $m_1-k+1=m_1-2m_1-p_0+1=-p_0-m_1+1=m_2$. 
+
+
+\end{frame}
+
+
+
+
+
+
+\begin{frame}[fragile]{\textbf{Si no hay una segunda solución en serie de Frobenius}}
+
+\begin{block}{Conclusión}
+ Si no se puede encontrar un segunda solución en Serie de Frobenius tenemos una segunda solución de la forma.
+ 
+ \boxedeq{y_2(x)=b_{k-1}y_1\ln x+x^{m_2}\sum_{n=0}^{\infty}c_nx^n.}{eq:des_enter}
+ 
+\end{block}
+
+
+
+
+
+
+
+\end{frame}
+
+
+
+
+
+
+\begin{frame}[fragile]{\textbf{Convergencia solución en serie de Frobenius}}
+
+\begin{block}{Teorema (Frobenius)} 
+Supongamos $x=0$ un punto regular singular de la ecuación
+\begin{equation}\label{eq:dif_2_orden} y''+p(x)y'+q(x)y=0.
+\end{equation}
+Supongamos que $xp(x)$ y $x^2q(x)$ poseen los  siguientes desarrollos en serie
+\[xp(x)=\sum_{n=0}^{\infty}p_nx^n\quad\text{y}\quad x^2q(x)=\sum_{n=0}^{\infty}q_nx^n\]
+y que estas series convergen para $|x|<R$ ($R>0$). 
+\end{block}
+
+\end{frame}
+
+\begin{frame}[fragile]{\textbf{Convergencia solución en serie de Frobenius}}
+
+\begin{block}{Teorema (Frobenius)} 
+Supongamos que la ecuación indicial tiene la raíces reales $m_1$, $m_2$ con  $m_2\leq m_1$.  Entonces la ecuación \eqref{eq:dif_2_orden}  tiene una solución  dada por
+\[y_1=x^{m_1}\sum_{n=0}^{\infty}a_nx^n\quad a_0\neq 0.\]
+La serie $\sum_{n=0}^{\infty}a_nx^n$ converge en $|x|<R$. Si $m_1-m_2$ no es un entero no negativo entonces tenemos una segunda solución en serie de Frobenius con $m_2$ en lugar de $m_1$ y satisfaciendo las mismas condiciones que la primera serie.
+\end{block}
+
+\end{frame}
+
+
+
+
+
+
+
+%\end{document}

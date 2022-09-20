@@ -1,0 +1,157 @@
+% Inicio de la presentacion
+% Para ejecutar el Python
+% /usr/share/texlive/texmf-dist/scripts/pythontex/pythontex3.py Series.tex
+\documentclass{beamer}
+\DeclareOptionBeamer{compress}{\beamer@compresstrue}
+\ProcessOptionsBeamer
+
+\mode<presentation>
+
+\useoutertheme[footline=authortitle]{miniframes}
+\useinnertheme{circles}
+\usecolortheme{whale}
+\usecolortheme{orchid}
+
+\definecolor{beamer@blendedblue}{rgb}{0.137,0.466,0.741}
+
+\setbeamercolor{structure}{fg=beamer@blendedblue}
+\setbeamercolor{titlelike}{parent=structure}
+\setbeamercolor{frametitle}{fg=black}
+\setbeamercolor{title}{fg=black}
+\setbeamercolor{item}{fg=black}
+
+\mode
+<all>
+
+
+%\usecolortheme{}
+%\usecolortheme[named=Aquamarine]{structure}
+%\usetheme{Singapore}%{Marburg}%{Berkeley}%{Antibes}%{Darmstadt}
+%\usefonttheme{serif}
+
+
+
+%\setbeamertemplate{navigation symbols}{}
+%\setbeamertemplate{footline}{}
+
+% Personalizar el color de los títulos
+
+% \setbeamercolor{title}{fg=black,bg=Aquamarine}
+% \setbeamercolor{block title example}{fg=black,bg=Lavender!90}
+% \setbeamercolor{block title alerted}{fg=black,bg=Lavender!80}
+% \setbeamercolor{block body alerted}{fg=black,bg=Lavender!20}
+% Paquetes utilizados
+% Engine-specific settings
+% Detect pdftex/xetex/luatex, and load appropriate font packages.
+% This is inspired by the approach in the iftex package.
+% pdftex:
+\ifx\pdfmatch\undefined
+\else
+    \usepackage[T1]{fontenc}
+    \usepackage[utf8]{inputenc}
+\fi
+% xetex:
+\ifx\XeTeXinterchartoks\undefined
+\else
+    \usepackage{fontspec}
+    \defaultfontfeatures{Ligatures=TeX}
+\fi
+% luatex:
+\ifx\directlua\undefined
+\else
+    \usepackage{fontspec}
+\fi
+% End engine-specific settings
+\setmainfont{Roboto Condensed}
+
+
+
+
+
+
+\usepackage{animate}
+\usepackage{tikz}
+\usepackage{mathrsfs}
+\usepackage{array}
+\usepackage{wrapfig}
+%\usepackage[latin1]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{beamerthemesplit}
+\usepackage{verbatim}
+\usepackage{amssymb,amsmath}
+\usepackage{amssymb,amscd,enumerate,graphicx}
+\usepackage{color}
+\usepackage{esint}
+\usepackage{adjustbox} 
+\usepackage{empheq}
+\usepackage[framemethod=TikZ]{mdframed}
+\usepackage[makestderr]{pythontex}%Ejecutar python dentro latex
+\usepackage[breakable,many]{tcolorbox}
+\usepackage{listings}
+\usepackage{array}
+
+\graphicspath{{/home/fernando/fer/Docencia/grado/EcuacionesDiferenciales/Materiales/Teoria_Basica/imagenes/}}
+% Información Personal
+% Definiciones
+
+
+\usetikzlibrary{backgrounds}
+\usetikzlibrary{mindmap,trees}	
+
+\tikzstyle{every picture}+=[remember picture]
+
+
+
+\renewcommand{\emph}[1]{\textcolor{blue}{\bfseries #1}}
+\renewcommand{\textbf}[1]{\textcolor{green}{\bfseries #1}}
+
+
+
+
+\input{ComandosEstilosTeoremas.tex}
+
+\title[Series de potencias]{Desarrollo de soluciones en series de potencias}
+
+
+
+\author[]{\vspace{.5cm} \\ \textbf{Gastón Beltritti} \\ \vspace{.1cm} \textbf{Fernando Mazzone}}
+
+
+\vspace{1.1cm}
+
+\institute{Departamento de Matemática \\FCEFQyN - UNRC.}
+
+\date{\today}
+
+
+
+
+% Estructura inicial
+
+\begin{document}
+\frame{\titlepage} %Primer Frame para información personal.
+
+
+
+
+ 
+
+
+
+\begin{frame}{\textbf{Objetivo}}
+ 
+\begin{block}{}
+Obtener expresiones de soluciones de ecuaciones diferenciales lineales a coeficientes variables por medio de series de funciones elementales. Demostrar teoremas que nos digan cuando estos desarrollos son posibles.
+\end{block}
+\end{frame}
+
+
+\input{Uni6.tex}
+
+
+
+ 
+
+
+\end{document}
+

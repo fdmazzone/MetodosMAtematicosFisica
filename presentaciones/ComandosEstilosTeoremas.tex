@@ -1,0 +1,122 @@
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%Nuevos comandos entornos%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newenvironment{demo}{\noindent\emph{Dem.}}{\hfill\qed \newline\vspace{5pt}}
+
+% \newenvironment{observa}{\noindent\textbf{Observación:}}{}
+\newcommand{\com}{\mathbb{C}}
+\newcommand{\rr}{\mathbb{R}}
+\newcommand{\nn}{\mathbb{N}}
+% \renewcommand{\epsilon}{\varepsilon}
+\renewcommand{\lim}{\mathop{\rm lím}}
+\renewcommand{\inf}{\mathop{\rm ínf}}
+\renewcommand{\liminf}{\mathop{\rm líminf}}
+\renewcommand{\limsup}{\mathop{\rm límsup}}
+\renewcommand{\min}{\mathop{\rm mín}}
+\renewcommand{\max}{\mathop{\rm máx}}
+\renewcommand{\b}[1]{\boldsymbol{#1}}
+% \renewenvironment{frame}[1]{}{}
+
+%%%%%%%%%%%%%%%% Funcion característica %%%%%%%%%%%5555555
+
+\DeclareRobustCommand{\rchi}{{\mathpalette\irchi\relax}}
+\newcommand{\irchi}[2]{\raisebox{\depth}{$#1\chi$}} % inner command, used by \rchi
+\newcommand{\der}[2]{\frac{\partial #1}{\partial #2}} 
+ 
+%  \definecolor{mycolor}{RGB}{204,179,174}
+% 
+% \tcbset{highlight math style={enhanced,
+%   colframe=red!60!black,colback=mycolor,arc=4pt,boxrule=1pt,
+%   drop fuzzy shadow}}
+
+% 
+% 
+% 
+
+
+%\renewcommand{\lim}{displaystyle\lim}
+\DeclareMathOperator{\atan2}{atan2}
+\DeclareMathOperator{\sen}{sen}
+
+\pgfdeclareverticalshading{exersicebackground}{100bp}
+  {color(0bp)=(black!40);color(50bp)=(black!0)}
+
+\mdfdefinestyle{MiEstilo}{innertopmargin=10pt,linecolor=white!100,%
+linewidth=2pt,topline=true,tikzsetting={shading=exersicebackground}}  
+
+
+
+%%%%%%%%%%%%%%%%  Recuadro ecuacion %%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\newcommand{\boxedeq}[2]{%
+\begin{empheq}[box=\tcbhighmath]{equation}\label{#2} #1 \end{empheq}}
+
+%\newcommand{boxedeq}[1]{\textbf{#1}}
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Codigo
+\newenvironment{codigo}[1][]{%
+\mdfsetup{style=MiEstilo%
+}
+\ifstrempty{#1}
+{
+\begin{mdframed}[]\relax%
+\strut \textbf{Codigo}
+}
+{
+\begin{mdframed}[]\relax%
+\strut \textbf{Codigo (#1)}
+}}{\end{mdframed}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%Colores
+
+\definecolor{color8}{HTML}{8E87C1}
+\definecolor{color2}{rgb}{0.44,0.62,0.42}
+\definecolor{color3}{rgb}{0.28, 0.51, .68}
+\definecolor{color4}{rgb}{0.29,0.3,0.57}
+
+
+%%%%%%%%%%%%%%%%%%%%%% Configuracion listing
+
+\lstset{ %
+  backgroundcolor=\color{white},   % choose the background color; you must add \usepackage{color} or \usepackage{xcolor}
+  basicstyle=\footnotesize,        % the size of the fonts that are used for the code
+  breakatwhitespace=false,         % sets if automatic breaks should only happen at whitespace
+  breaklines=true,                 % sets automatic line breaking
+  captionpos=b,                    % sets the caption-position to bottom
+  commentstyle=\color{color2},    % comment style
+  deletekeywords={...},            % if you want to delete keywords from the given language
+  escapeinside={\%*}{*)},          % if you want to add LaTeX within your code
+  extendedchars=true,              % lets you use non-ASCII characters; for 8-bits encodings only, does not work with UTF-8
+  frame=single,	                   % adds a frame around the code
+  keepspaces=true,                 % keeps spaces in text, useful for keeping indentation of code (possibly needs columns=flexible)
+  keywordstyle=\color{blue},       % keyword style
+  language=Python,                 % the language of the code
+  otherkeywords={symbols,dsolve,solve,Eq, simplify, subs, plot,Function},           % if you want to add more keywords to the set
+  numbers=left,                    % where to put the line-numbers; possible values are (none, left, right)
+  numbersep=5pt,                   % how far the line-numbers are from the code
+  numberstyle=\tiny\color{color3}, % the style that is used for the line-numbers
+  rulecolor=\color{black},         % if not set, the frame-color may be changed on line-breaks within not-black text (e.g. comments (green here))
+  showspaces=false,                % show spaces everywhere adding particular underscores; it overrides 'showstringspaces'
+  showstringspaces=false,          % underline spaces within strings only
+  showtabs=false,                  % show tabs within strings adding particular underscores
+  stepnumber=2,                    % the step between two line-numbers. If it's 1, each line will be numbered
+  stringstyle=\color{color4},     % string literal style
+  tabsize=2,	                   % sets default tabsize to 2 spaces
+  title=\lstname                   % show the filename of files included with \lstinputlisting; also try caption instead of title
+}
+
