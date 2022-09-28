@@ -576,7 +576,7 @@ Los problemas de Sturm-Liouville con valores en la frontera   son ejemplos de pr
 La importancia de los problemas de valores propios es que surgen al usar el método de separación de variables para resolver ecuaciones diferenciales parciales.
 \onslide<+->
 
-\textbf{Ejemplo (de unidad 7)}
+\textbf{Ejemplo }
 $$
 \left\{\begin{array}{r}
 X^{\prime \prime}+\lambda X=0 \\
@@ -584,7 +584,7 @@ X(0)=X(L)=0
 \end{array}\right.
 $$
 
-Se concluyó
+Se concluye
 
 
 $$
@@ -601,7 +601,7 @@ son las correspondientes autofunciones.
  
 
 \begin{frame}{ Ejemplo 2}
-En la unidad 7 se vió que el problema 
+El problema 
 $$
 \left\{\begin{array}{l}
 X^{\prime \prime}+\lambda X=0\quad 0<x<L \\
@@ -1111,7 +1111,7 @@ Sólo demostraremos la desigualdad de Cauchy-Schwartz. Las otras propiedades son
 
 Asumimos $f, g \neq 0$. Entonces 
 $$
-\frac{|f|}{\|f\|_{L^2_r}} \frac{|g|}{\|g\|_{L^2_r}} \leqslant \frac{1}{2\|f\|_{L^2_r}}|f|^2+\frac{1}{2 \| g\|_{L^2_r}}|g|^2
+\frac{|f|}{\|f\|_{L^2_r}} \frac{|g|}{\|g\|_{L^2_r}} \leqslant \frac{1}{2\|f\|_{L^2_r}^2}|f|^2+\frac{1}{2 \| g\|_{L^2_r}^2}|g|^2
 $$
 Multiplicando por $r(x)$ e integrando
 $$
@@ -1125,11 +1125,11 @@ De aca sale \qed
 
 
 \begin{frame}{Propiedades de la norma}
-\begin{block}{Propiedades norma} S $f,g\in L^2([a,b],W)$ y $\alpha\in\mathbb{C}$:  
+\begin{block}{Propiedades norma} S $f,g\in L^2([a,b],r)$ y $\alpha\in\mathbb{C}$:  
 \begin{description}
  
 
- \item[No degeneración] $|f|_{L^2}\geq 0$ y $|f|_{L^2}=0\Leftrightarrow f=0$.
+ \item[No degeneración] $\|f\|_{L^2_r}\geq 0$ y $\|f\|_{L^2_r}=0\Leftrightarrow f=0$.
 \item[Homogeneidad] $\|\alpha f\|_{L^2_r}=|\alpha|\|f\|_{L^2_r}$.
 \item[Desigualdad Triangular o Minkowski] 
 \begin{empheq}[box=\tcbhighmath]{equation}\label{eq:minkowski}
@@ -1154,7 +1154,7 @@ $$
 &= \int_a^b\overline{(f+g)} (f+g)r(x)d x
 =\int_a^b \left(|f|^2+2\operatorname{Re}( f \overline{g})+|g|^2\right) r(x)d x . \\
 & \leq \int_a^b |f|^2 r(x)d x+2\int_a^b|f\overline{g}|r(x)dx+\int_a^b |g|^2 r(x)d x \\
-&=\|f\|_{L^2_r}^2+2\|f\|_{L^2_r}\|g\|_{L^2_r}+\|g\|_{L^2_r}^2=(\|f\|+\|g\|)^2
+&=\|f\|_{L^2_r}^2+2\|f\|_{L^2_r}\|g\|_{L^2_r}+\|g\|_{L^2_r}^2=(\|f\|_{L^2_r}+\|g\|_{L^2_r})^2
 \end{aligned}
 $$
 
@@ -1312,8 +1312,6 @@ $$y^{\prime \prime}+\lambda y=0 ; \quad y(0)=y(\pi)=0$$
 
 tiene autovalores  $\lambda_{n}=n^{2}, n=1,2$, $3, \ldots$, con funciones propias correspondientes $\phi_{n}(x)=c_{n}$ sen $n x$. Verificar la ortogonalidad de manera directa.
 
-
-\textbf{Ejercicio} Analizar el caso de condiciones de contorno periódicas.
  \end{frame}
  
  
@@ -1425,9 +1423,39 @@ donde las $c_{n}$ están dadas por la fórmula \eqref{eq:des_ortogo}.
 \end{block}
  \end{frame}
 
+\subsection{Problemas periodicos de Sturm-Liouville}
 
+\begin{frame}{Problemas periodicos de Sturm-Liouville}
+ 
+\begin{empheq}[box=\tcbhighmath]{equation}\label{eq:pro_perio}  
+\left\{
+        \begin{array}{ll}
+                    \frac{d}{d x}\left(p(x) \frac{d y}{d x}\right)+q(x) y+\lambda r(x) y=0, & a<x<b\\
+                    y(0)=y(T),&\\
+                     y'(0)=y'(T), &
+        \end{array}
+ \right.
+\end{empheq}
+  \end{frame}
+ 
 
- \iffalse
+ \begin{frame}{Problemas singulares de Sturm-Liouville}
+\begin{block}{Propiedades problema periódico}
+ Supongamos que $p,q,r$ son funciones continuas y que $p(0)=p(T)$, $q(0)=q(T)$, y $r(0)=r(T)$. Sea $V$ el espacio vectorial de la funciones continuas que satisfacen las condiciones de controno periódicas y $L[u]=(pu')'+qu$. 
+ \begin{enumerate}
+  \item Demostrar que $L$ es hermitiano en $V$.
+  \item A partir de allí demostrar que los autovalores son reales y las autofunciones se pueden tomar a valores reales.
+  \item ¿Serán simples los autovalores?
+ \end{enumerate}
+\end{block}
+
+\textbf{Observacón} Las afirmaciones sobre que los autovalores forman una sucesión y  sobre desarrollos en serie de autofunciones continuan siendo ciertos. 
+
+ 
+ 
+\end{frame}
+
+ 
  \section{Problemas singulares de Sturm-Liouville}
  
  \subsection{Definición y ejemplos}
@@ -1455,7 +1483,7 @@ donde  $p(x), p^{\prime}(x), q(x)$ y $r(x)$ son  continuas en $(a, b)$ con valor
 
 La \emph{ecuación de Bessel de orden $\nu$}
 \begin{empheq}[box=\tcbhighmath]{equation}\label{eq:bessel}  
- t^{2} y^{\prime \prime}(t)+y^{\prime}(t)+\left(t^{2}-\nu^{2}\right) y=0, \quad 0<t<\sqrt{\lambda} b
+ t^{2} y^{\prime \prime}(t)+ty^{\prime}(t)+\left(t^{2}-\nu^{2}\right) y=0, \quad 0<t<\sqrt{\lambda} b
 \end{empheq}
  
 se puede transformar mediante la sustitución $t=\sqrt{\lambda} x$ en la ecuación singular de Sturm-Liouville
@@ -2153,6 +2181,6 @@ $$f(x,y)=u(x,y,0),$$
 y el Teorema anterior nos dice como elegir $a_{nk},b_{nk}$ para conseguir esto. 
    \end{frame}
    
-\fi   
+
    
 \end{document}
